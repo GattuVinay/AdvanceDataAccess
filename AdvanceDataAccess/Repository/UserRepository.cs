@@ -24,7 +24,7 @@ namespace AdvanceDataAccess.Repository
             }
 
             // Fetch users with caching
-            public async Task<IEnumerable<Users>> GetUsersAsync()
+            public override async Task<IEnumerable<Users>> GetUsersAsync()
             {
                 string cacheKey = "users";
                 var cachedUsers = await _cache.StringGetAsync(cacheKey);
@@ -38,24 +38,24 @@ namespace AdvanceDataAccess.Repository
             }
 
             // Fetch single user with Dapper
-            public async Task<Users> GetUserByIdAsync(int id)
+            public override async Task<Users> GetUserByIdAsync(int id)
             {
                 using var connection = new SqlConnection(_connectionString);
                 return await connection.QueryFirstOrDefaultAsync<Users>("SELECT * FROM Users WHERE Id = @Id", new { Id = id });
             }
 
             // Add a user with EF Core
-            public async Task AddUserAsync(Users users)
+            public override async Task AddUserAsync(Users users)
             {
                 await _context.Users.AddAsync(users);
                 await _context.SaveChangesAsync();
             }
 
             // Bulk Insert Users using EFCore.BulkExtensions
-            public async Task BulkInsertUsersAsync(List<Users> users)
+            public override async Task BulkInsertUsersAsync(List<Users> users)
             {
                 await _context.BulkInsertAsync(users);
             }
-        }
+    }
     
 }
